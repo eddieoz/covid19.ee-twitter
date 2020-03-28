@@ -15,7 +15,6 @@ const client = new Twitter({
     access_token_secret: process.env.ACCESS_TOKEN_SECRET
 })
 
-
 let siteUrl = "https://n06yidj8d0.execute-api.us-east-1.amazonaws.com/covid19bot";
 
 const fetchData = async () => {
@@ -29,30 +28,20 @@ const fetchData = async () => {
 
 };
 
-const postTweet = async (message) => {
-    client.post("statuses/update", { status: message }, function (error, tweet, response) {
-        if (error) {
-            console.log(error)
-        } else {
-            console.log(tweet)
-        }
-    })
-}
-
 exports.handler = async () => {
     
     var result = await fetchData();
 
-    title = result.title;
-    content = result.content.slice(0,220);
-    url = result.url;
+    var title = result.title;
+    var content = result.content.slice(0,220);
+    var url = result.url;
 
-    result = postTweet(title + '\n' + content + '...\n' + url);
+    var message = title + '\n' + content + '...\n' + url;
+    var tweet = await client.post("statuses/update", { status: message });
     
     return {
-        title,
-        content,
-        result
+        result,
+        tweet,
     };
 };
 
